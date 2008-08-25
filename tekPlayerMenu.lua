@@ -1,17 +1,21 @@
 
-local order = {"WHISPER", "INVITE", "TARGET", "GUILD_PROMOTE", "GUILD_LEAVE", "ADD_FRIEND", "IGNORE", "WHO", "REPORT_SPAM", "CANCEL"}
-local clickers = {["ADD_FRIEND"] = AddFriend, ["IGNORE"] = AddIgnore, ["WHO"] = SendWho, ["GUILD_INVITE"] = GuildInviteByName}
+local function insertbefore(t, before, val)
+ for k,v in ipairs(t) do if v == before then return table.insert(t, k, val) end end
+ table.insert(t, val)
+end
+
+local clickers = {["ADD_FRIEND"] = AddFriend, ["IGNORE"] = AddIgnore, ["WHO"] = SendWho, ["GUILD_INVITE"] = GuildInvite}
 
 
 UnitPopupButtons["ADD_FRIEND"] = {text = TEXT(ADD_FRIEND), dist = 0}
 UnitPopupButtons["GUILD_INVITE"] = {text = "Guild Invite", dist = 0}
 UnitPopupButtons["IGNORE"] = {text = TEXT(IGNORE), dist = 0}
 UnitPopupButtons["WHO"] = {text = TEXT(WHO), dist = 0}
-UnitPopupMenus["FRIEND"] = {}
-for k,v in pairs(order) do UnitPopupMenus["FRIEND"][k] = v end
 
-table.insert(UnitPopupMenus["PLAYER"], getn(UnitPopupMenus["PLAYER"])-1, "WHO")
-table.insert(UnitPopupMenus["PARTY"], getn(UnitPopupMenus["PARTY"])-1, "WHO")
+insertbefore(UnitPopupMenus["FRIEND"], "GUILD_PROMOTE", "GUILD_INVITE")
+insertbefore(UnitPopupMenus["FRIEND"], "GUILD_INVITE", "ADD_FRIEND")
+insertbefore(UnitPopupMenus["FRIEND"], "IGNORE", "WHO")
+insertbefore(UnitPopupMenus["PLAYER"], "INVITE", "WHO")
 
 
 hooksecurefunc("UnitPopup_HideButtons", function()
@@ -23,9 +27,9 @@ hooksecurefunc("UnitPopup_HideButtons", function()
 end)
 
 
-hooksecurefunc("UnitPopup_OnClick", function()
+hooksecurefunc("UnitPopup_OnClick", function(self)
 	local dropdownFrame = getglobal(UIDROPDOWNMENU_INIT_MENU)
-	local button = this.value
+	local button = self.value
 	if clickers[button] then clickers[button](dropdownFrame.name) end
 	PlaySound("UChatScrollButton")
 end)
