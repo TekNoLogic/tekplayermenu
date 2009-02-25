@@ -19,7 +19,7 @@ insertbefore(UnitPopupMenus["PLAYER"], "INVITE", "WHO")
 
 
 hooksecurefunc("UnitPopup_HideButtons", function()
-	local dropdownMenu = getglobal(UIDROPDOWNMENU_INIT_MENU)
+	local dropdownMenu = UIDROPDOWNMENU_INIT_MENU
 	for i,v in pairs(UnitPopupMenus[dropdownMenu.which]) do
 		if v == "GUILD_INVITE" then UnitPopupShown[i] = (not CanGuildInvite() or dropdownMenu.name == UnitName("player")) and 0 or 1
 		elseif clickers[v] then UnitPopupShown[i] = (dropdownMenu.name == UnitName("player") and 0) or 1 end
@@ -28,7 +28,7 @@ end)
 
 
 hooksecurefunc("UnitPopup_OnClick", function(self)
-	local dropdownFrame = getglobal(UIDROPDOWNMENU_INIT_MENU)
+	local dropdownFrame = UIDROPDOWNMENU_INIT_MENU
 	local button = self.value
 	if clickers[button] then clickers[button](dropdownFrame.name) end
 	PlaySound("UChatScrollButton")
